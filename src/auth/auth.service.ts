@@ -20,18 +20,23 @@ export class AuthService {
           throw new UnauthorizedException('User not found!');
         }
     
+        // checked correct password
         const isPasswordMatching = await bcrypt.compare(
-            user.password,
-            password
+            password,
+            user.password
         );
-       // const passwordIsMatch = await bcrypt.verify(user.password, password);
     
         if(!isPasswordMatching) {
           throw new UnauthorizedException('Password are incorrect!'); 
         }
+
+        // checked is confirmed
+        if(!user.isConfirmed) {
+          throw new UnauthorizedException('Email is not confirmed!');
+        }
         
         return user;
-      }
+    }
 
     public getCookieWithJwtAccessToken(userId: number) {
         const payload: TokenPayload = { userId };
@@ -39,8 +44,13 @@ export class AuthService {
             secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
             expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}s`
         });
+
+        const cookie = `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
         //todo Улучшением вышеизложенного было бы изменение  параметра Path  файла cookie токена обновления, чтобы браузер не отправлял его при каждом запросе.
-        return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
+        return {
+          cookie,
+          token
+        };
     }
 
     public getCookieWithJwtRefreshToken(userId: number) {
@@ -75,5 +85,12 @@ export class AuthService {
           }
           throw new BadRequestException('Bad confirmation token');
         }
+    }
+
+    getCookiesForLogOut() {
+      return [
+        'Authentication=; HttpOnly; Path=/; Max-Age=0',
+        'Refresh=; HttpOnly; Path=/; Max-Age=0'
+      ];
     }
 }

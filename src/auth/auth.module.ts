@@ -7,20 +7,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
+import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh.strategy';
+import { JwtAccessTokenStrategy } from './strategies/jwt-access.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
-    /*JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
-        signOptions: {expiresIn: '30d'}
-      }),
-      inject: [ConfigService]
-    })*/
+    TypeOrmModule.forFeature([User])
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtService, LocalStrategy]
+  providers: [AuthService, UserService, JwtService, JwtRefreshTokenStrategy, JwtAccessTokenStrategy, LocalStrategy]
 })
 export class AuthModule {}

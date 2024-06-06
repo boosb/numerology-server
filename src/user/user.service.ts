@@ -47,6 +47,10 @@ export class UserService {
         password: await bcrypt.hash(сreateUserDto.password, 10),
       });
     }
+    
+    async getAll() {
+      return await await this.usersRepository.find();
+    }
 
     public sendVerificationLink(email: string, oldEmail: string | null) {
       const payload: VerificationTokenPayload = { email, oldEmail };
@@ -84,6 +88,14 @@ export class UserService {
         return await this.usersRepository.findOne({ where: { id: userId } });
     }
 
+    async removeRefreshToken(userId: number) {
+      return await this.usersRepository.update(userId, {
+        currentHashedRefreshToken: null
+      });
+
+      //return await this.usersRepository.findOne({ where: { id: userId } });
+    }
+
     async getById(id: number) {
         const user = await this.usersRepository.findOne({ where: { id } });
         if (user) {
@@ -107,7 +119,7 @@ export class UserService {
           refreshToken,
           user.currentHashedRefreshToken
         );
-     
+
         if (isRefreshTokenMatching) {
           return user;
         }
