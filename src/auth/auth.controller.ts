@@ -1,12 +1,11 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, HttpCode, Param, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, HttpCode, Param, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { LocalAuthGuard } from './quards/local-auth.guard';
 import JwtRefreshGuard from './quards/jwt-refresh.quard';
-import LogInDto from './dto/log-in.dto';
 import { Request } from 'express';
 import JwtAccessGuard from './quards/jwt-access.guard';
-import UserDto from './dto/user.dto';
+import RequestWithUser from 'src/interfaces/requestWithUser.interface';
 
 @Controller('auth')
 //@UseInterceptors(ClassSerializerInterceptor)
@@ -19,18 +18,16 @@ export class AuthController {
     //@HttpCode(200)
     @UseGuards(LocalAuthGuard)
     @Post('log-in')
-    async logIn(@Req() request: Request, @Body() logInDto: LogInDto) {
-      let user = await this.usersService.getByEmail(logInDto.email);
-      if(!user) {
-        return;
-      }
-      const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(user.id);
-      const refreshTokenCookie = this.authService.getCookieWithJwtRefreshToken(user.id);
+    async logIn(@Req() request: RequestWithUser) {
+      const { user } = request;
+      const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(user['id']);
+      const refreshTokenCookie = this.authService.getCookieWithJwtRefreshToken(user['id']);
    
-      user = await this.usersService.setCurrentRefreshToken(refreshTokenCookie.token, user.id);
+      await this.usersService.setCurrentRefreshToken(refreshTokenCookie.token, user['id']);
    
       request.res.setHeader('Set-Cookie', [accessTokenCookie.cookie, refreshTokenCookie.cookie]);
       request.res.cookie('Refresh', refreshTokenCookie.token)
+      //request.res.cookie('Authentication', accessTokenCookie.cookie)
 
       return {
         ...user,
@@ -40,13 +37,13 @@ export class AuthController {
 
     @UseGuards(JwtAccessGuard)
     @Post('log-out') 
-    async logout(@Req() request: Request, @Body() userDto: UserDto) {
-      console.log(request, ' >>> request-1')
-      console.log(userDto, ' >>> userDto-1')
-      await this.usersService.removeRefreshToken(userDto.userId);
+    async logout(@Req() request: RequestWithUser) {
+      const userId = request.user['id'];
+      await this.usersService.removeRefreshToken(userId);
       request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
     }
 
+    // todo Пока оставлю вопрос открытым. Нужен ли здесь гуард? 
     @Get('confirmed')
     async confirmedEmail(@Query() query) {
       //console.log(query, ' >>> query')
@@ -61,11 +58,17 @@ export class AuthController {
     }
 
     @UseGuards(JwtRefreshGuard)
-    @Get('refresh')
-    refresh(@Req() request: Request, @Body() userDto: UserDto) {
-      const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(userDto.userId);
-   
+    @Post('refresh')
+    async refresh(@Req() request: RequestWithUser) {
+      console.log(request.user, ' >>>> request.cookies----------------1234');
+
+      // todo хм... почему не работает нотация через точку? 
+      const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user['id']);
       request.res.setHeader('Set-Cookie', accessTokenCookie.cookie);
-      return request.user;
+
+      return {
+        ...request.user,
+        token: accessTokenCookie.token
+      };
     }
 }

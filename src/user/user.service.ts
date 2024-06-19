@@ -9,6 +9,7 @@ import { createTransport } from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { VerificationTokenPayload } from 'src/interfaces/verificationTokenPayload';
 import { JwtService } from '@nestjs/jwt';
+import UpdateUserDto from './dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -81,11 +82,11 @@ export class UserService {
 
     async setCurrentRefreshToken(refreshToken: string, userId: number) {
         const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-        await this.usersRepository.update(userId, {
+        return await this.usersRepository.update(userId, {
           currentHashedRefreshToken
         });
 
-        return await this.usersRepository.findOne({ where: { id: userId } });
+        //return await this.usersRepository.findOne({ where: { id: userId } });
     }
 
     async removeRefreshToken(userId: number) {
@@ -140,5 +141,33 @@ export class UserService {
       return this.usersRepository.update({ email }, {
         isConfirmed: true
       });
+    }
+
+    public async updateUser(id: number, updateUserDto: UpdateUserDto) {
+      console.log('1')
+      await this.usersRepository.update(id, {
+        email: updateUserDto.email,
+        balance: updateUserDto.balance,
+    
+        name: updateUserDto.name,
+        gender: updateUserDto.gender,
+        dateBirth: updateUserDto.dateBirth,
+        goodZodiacSigns: updateUserDto.goodZodiacSigns,
+        favoriteActivity: updateUserDto.favoriteActivity,
+        familyStatus: updateUserDto.familyStatus,
+    
+        timeBirth: updateUserDto.timeBirth,
+        placeBirth: updateUserDto.placeBirth,
+        isCompiledBirthChart: updateUserDto.isCompiledBirthChart,
+        importantTopics: updateUserDto.importantTopics,
+        element: updateUserDto.element,
+        characterTraits: updateUserDto.characterTraits,
+        understandingEnvironment: updateUserDto.understandingEnvironment,
+        loveLanguage: updateUserDto.loveLanguage,
+        lifeAspect: updateUserDto.lifeAspect,
+        wantsLive: updateUserDto.wantsLive
+      });
+      console.log('2')
+      return await this.getById(id);
     }
 }
