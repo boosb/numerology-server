@@ -8,19 +8,19 @@ class UserForecast {
   public id: number;
  
   @OneToOne(() => User, (user) => user.forecasts)
-  user: User;
+  public user: User;
 
   @OneToOne(() => Forecast, (forecast) => forecast.users)
-  forecast: Forecast;
+  public forecast: Forecast;
 
-  @Column()
-  public value: number;
+  @Column({ type: 'timestamptz' })
+  public buyDate: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  public createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  public updatedAt: Date;
 }
  
 export default UserForecast;
