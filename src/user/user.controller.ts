@@ -24,7 +24,7 @@ export class UserController {
       if(user.email !== createUserDto.email) {
         await this.authService.sendVerificationLink(createUserDto.email);
       }*/
-     console.log(updateUserDto, '  >>> updateUserDto')
+      
       return this.userService.updateUser(id, updateUserDto);
     }
 

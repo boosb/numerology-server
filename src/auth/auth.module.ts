@@ -9,10 +9,12 @@ import { JwtService } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtAccessTokenStrategy } from './strategies/jwt-access.strategy';
+import Forecast from 'src/forecast/entities/forecast.entity';
+import UserForecast from 'src/forecast/entities/userForecast.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User])
+    TypeOrmModule.forFeature([User, Forecast, UserForecast])
   ],
   controllers: [AuthController],
   providers: [AuthService, UserService, JwtService, JwtRefreshTokenStrategy, JwtAccessTokenStrategy, LocalStrategy]

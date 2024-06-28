@@ -46,7 +46,6 @@ export class AuthController {
     // todo Пока оставлю вопрос открытым. Нужен ли здесь гуард? 
     @Get('confirmed')
     async confirmedEmail(@Query() query) {
-      //console.log(query, ' >>> query')
       const {email, oldEmail} = await this.authService.decodeConfirmationToken(query.token);
 
       // todo тут хорошо бы добавить логику обновления email на новый
@@ -60,8 +59,6 @@ export class AuthController {
     @UseGuards(JwtRefreshGuard)
     @Post('refresh')
     async refresh(@Req() request: RequestWithUser) {
-      console.log(request.user, ' >>>> request.cookies----------------1234');
-
       // todo хм... почему не работает нотация через точку? 
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user['id']);
       request.res.setHeader('Set-Cookie', accessTokenCookie.cookie);

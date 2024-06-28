@@ -1,7 +1,7 @@
 
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import UserForecast from './userForecast.entity';
+import UserForecast from '../../forecast/entities/userForecast.entity';
  
 @Entity()
 class User {

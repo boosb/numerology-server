@@ -22,7 +22,6 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
   }
 
   async validate(user: User) { // todo чет это не юзер, а ИД юзера
-    console.log(user, ' >> user')
     //todo разобраться бы с этими объектами
     return { id: user.id || user['userId'], email: user.email };
   }

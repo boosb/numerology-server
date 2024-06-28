@@ -144,7 +144,6 @@ export class UserService {
     }
 
     public async updateUser(id: number, updateUserDto: UpdateUserDto) {
-      console.log('1')
       await this.usersRepository.update(id, {
         email: updateUserDto.email,
         balance: updateUserDto.balance,
@@ -167,7 +166,7 @@ export class UserService {
         lifeAspect: updateUserDto.lifeAspect,
         wantsLive: updateUserDto.wantsLive
       });
-      console.log('2')
+
       return await this.getById(id);
     }
 }
