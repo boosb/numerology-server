@@ -24,20 +24,15 @@ export class ForecastService {
         return forecast;
     }
 
-    public async getCurrentUserForecast(userId: number) {
+    public async getCurrentUserForecasts(userId: number) {
         //const user = await this.userService.getById(userId);
         const forecasts = await this._getUserForecasts(userId);
-        
+        const actualForecasts = this._getActualForecasts(forecasts);
 
-        console.log(forecasts, ' >>> forecasts')
+       // console.log(forecasts, ' >>> forecasts')
+        console.log(actualForecasts,' >>>> actualForecasts')
 
-        return forecasts.find(forecast => {
-            return forecast;
-        });
-    }
-
-    private _getForecast() {
-
+        return actualForecasts;
     }
 
     private async _getUserForecasts(userId: number) {
@@ -46,13 +41,44 @@ export class ForecastService {
         }});
     }
 
-    private _getTimeFrame(forecastId: number) {
-        switch(forecastId) {
-            case 1:
-                return {
-                    timeStart: null,
-                    timeEnd: null
-                }
+    // todo Надо ваще обсудить логику доступности прогноза
+    // на данный момент сделаю, что в какое бы время польтзователь не купил прогноз, в следующие сутки он уже не активен
+    private _getActualForecasts(forecasts: UserForecast[]) {
+        return forecasts.filter(forecast => {
+            const { forecastId, buyDate } = forecast;
+            const buyTime = buyDate.getTime();    
+
+            switch(forecastId) {
+                case 1:
+                    const { sunUp, lightsOut } = this._getBorderDay();
+                    const c = buyTime >= sunUp &&  buyTime <= lightsOut
+                    console.log(c, " >>>> cccccccc")
+                    console.log(buyTime, ' >>>> buyTime')
+                    console.log(sunUp, ' >>> sunUp')
+                    const test = new Date(1719532800000);
+                    const testTwo = new Date();
+                    console.log(test, '  >>> test')
+                    console.log(testTwo, '  >>> testTwo')
+                    return buyTime >= sunUp &&  buyTime <= lightsOut;
+                //todo задел на будущее (для еженедельного)
+                case 2:
+                    return;
+                default:
+                    return;
+            }
+        });
+    }
+
+    _getBorderDay() {
+        const currentDate = new Date();
+        console.log(currentDate, ' >>> currentDate')
+        return {
+            sunUp: currentDate.setUTCHours(0, 0, 0, 0),
+            lightsOut: currentDate.setUTCHours(23, 59, 59, 999),
         }
+    }
+
+    // todo задел на будущее (для еженедельного прогноза)
+    _getBorderWeek() {
     }
 }
