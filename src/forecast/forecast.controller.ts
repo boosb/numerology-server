@@ -15,6 +15,6 @@ export class ForecastController {
 
     @Get(':id')
     async getUserForecast(@Param('id') id: number) {
-      this.forecastService.getCurrentUserForecasts(id)
+      return await this.forecastService.getCurrentUserForecasts(id);
     }
 }

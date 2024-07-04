@@ -27,12 +27,15 @@ export class ForecastService {
     public async getCurrentUserForecasts(userId: number) {
         //const user = await this.userService.getById(userId);
         const forecasts = await this._getUserForecasts(userId);
-        const actualForecasts = this._getActualForecasts(forecasts);
+        return this._getActualForecasts(forecasts);
 
        // console.log(forecasts, ' >>> forecasts')
-        console.log(actualForecasts,' >>>> actualForecasts')
+        /*console.log(actualForecasts,' >>>> actualForecasts')
 
-        return actualForecasts;
+        return {
+            dailyForecast: actualForecasts.find(forecast => forecast.forecastId === 1),
+            weeklyForecast: actualForecasts.find(forecast => forecast.forecastId === 2)
+        };*/
     }
 
     private async _getUserForecasts(userId: number) {
@@ -51,14 +54,6 @@ export class ForecastService {
             switch(forecastId) {
                 case 1:
                     const { sunUp, lightsOut } = this._getBorderDay();
-                    const c = buyTime >= sunUp &&  buyTime <= lightsOut
-                    console.log(c, " >>>> cccccccc")
-                    console.log(buyTime, ' >>>> buyTime')
-                    console.log(sunUp, ' >>> sunUp')
-                    const test = new Date(1719532800000);
-                    const testTwo = new Date();
-                    console.log(test, '  >>> test')
-                    console.log(testTwo, '  >>> testTwo')
                     return buyTime >= sunUp &&  buyTime <= lightsOut;
                 //todo задел на будущее (для еженедельного)
                 case 2:
@@ -71,7 +66,6 @@ export class ForecastService {
 
     _getBorderDay() {
         const currentDate = new Date();
-        console.log(currentDate, ' >>> currentDate')
         return {
             sunUp: currentDate.setUTCHours(0, 0, 0, 0),
             lightsOut: currentDate.setUTCHours(23, 59, 59, 999),
