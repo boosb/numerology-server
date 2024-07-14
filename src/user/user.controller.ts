@@ -14,7 +14,6 @@ export class UserController {
     async create(@Body() createUserDto: CreateUserDto) {
       const user = await this.userService.create(createUserDto);
       await this.userService.sendVerificationLink(createUserDto.email, null);
-      //todo добаивть вызвод ошибки, если пользователь с таким емайлом уже существует 
       return user;
     }
 

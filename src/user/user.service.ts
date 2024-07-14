@@ -37,12 +37,12 @@ export class UserService {
           email: сreateUserDto.email
         }
       });
-  
+
       if(existUser) {
         throw new BadRequestException('This email already exist!');
       }
   
-      const user = await this.usersRepository.save({
+      return await this.usersRepository.save({
         email: сreateUserDto.email,
         //name: сreateUserDto.name,
         password: await bcrypt.hash(сreateUserDto.password, 10),
@@ -50,7 +50,7 @@ export class UserService {
     }
     
     async getAll() {
-      return await await this.usersRepository.find();
+      return await this.usersRepository.find();
     }
 
     public sendVerificationLink(email: string, oldEmail: string | null) {
