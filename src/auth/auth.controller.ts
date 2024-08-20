@@ -56,13 +56,13 @@ export class AuthController {
       return await this.usersService.confirmEmail(email);
     }
 
-    @UseGuards(JwtRefreshGuard)
+    //@UseGuards(JwtRefreshGuard)
     @Post('refresh')
     async refresh(@Req() request: RequestWithUser) {
       // todo хм... почему не работает нотация через точку? 
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user['id']);
       request.res.setHeader('Set-Cookie', accessTokenCookie.cookie);
-
+      console.log('TEST')
       return {
         ...request.user,
         token: accessTokenCookie.token
