@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import JwtAccessGuard from 'src/auth/quards/jwt-access.guard';
 import UpdateUserDto from './dto/updateUser.dto';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
     constructor(
         private readonly userService: UserService
