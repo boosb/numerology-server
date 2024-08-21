@@ -60,6 +60,7 @@ export class AuthController {
     @Post('refresh')
     async refresh(@Req() request: RequestWithUser) {
       // todo хм... почему не работает нотация через точку? 
+      console.log(request, ' >>> request')
       if(!request.user) {
         //todo возможно, что тут надо выбрасывать ошибку, если нет пользователя
         return;
