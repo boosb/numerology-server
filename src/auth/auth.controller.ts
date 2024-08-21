@@ -7,7 +7,7 @@ import { Request } from 'express';
 import JwtAccessGuard from './quards/jwt-access.guard';
 import RequestWithUser from 'src/interfaces/requestWithUser.interface';
 
-@Controller('auth')
+@Controller('api/auth')
 //@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
     constructor(
