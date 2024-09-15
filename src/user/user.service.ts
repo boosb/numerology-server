@@ -99,23 +99,23 @@ export class UserService {
 
     async getById(id: number) {
         const user = await this.usersRepository.findOne({ where: { id } });
-        if (user) {
-          return user;
+        if (!user) {
+          throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
         }
-        throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+        return user;
     }
 
     async getByEmail(email: string) {
         const user = await this.usersRepository.findOne({ where: { email } });
         if (!user) {
-          throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+          throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
         }
         return  user;
     }
      
     async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
         const user = await this.getById(userId);
-     
+        
         const isRefreshTokenMatching = await bcrypt.compare(
           refreshToken,
           user.currentHashedRefreshToken
@@ -126,7 +126,7 @@ export class UserService {
         }
     }
 
-    public async confirmEmail(email: string) {
+    public async confirmEmailAndGetUser(email: string) {
       const user = await this.getByEmail(email);
       if (user.isConfirmed) {
         throw new BadRequestException('Email already confirmed!');
