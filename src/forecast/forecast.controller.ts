@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ForecastService } from './forecast.service';
 import CreateForecastDto from './dto/createForecast.dto';
 
-@Controller('forecast')
+@Controller('api/forecast')
 export class ForecastController {
     constructor(
         private readonly forecastService: ForecastService

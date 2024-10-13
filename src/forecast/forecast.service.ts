@@ -20,7 +20,6 @@ export class ForecastService {
           forecastId: createForecastDto.forecastId,
         });
         // todo тут по хорошему должна быть првоерка. Если прогноз, укладывающийся в временные рамки, то не надо создавать новый, а вернуть уже существующий или null или ошибку какуюнибудь выбросить
-        console.log(forecast, ' >>> forecast')
         return forecast;
     }
 
