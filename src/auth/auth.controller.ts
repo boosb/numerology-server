@@ -56,7 +56,8 @@ export class AuthController {
 
    // @UseGuards(JwtRefreshGuard)
     @Post('refresh')
-    async refresh(@Req() request: RequestWithUser) {
+    @HttpCode(201)
+    refresh(@Req() request: RequestWithUser) {
       // todo хм... почему не работает нотация через точку?
       if (!request.user) {
         throw new BadRequestException('User PNH');
