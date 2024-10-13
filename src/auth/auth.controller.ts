@@ -59,8 +59,11 @@ export class AuthController {
     @HttpCode(201)
     async refresh(@Req() request: RequestWithUser, @Res() res) {
       // todo хм... почему не работает нотация через точку?
+      console.log('HELLO------1')
       if (!request.user) {
+        console.log('HELLO------2')
         await res.status(200).send();
+        console.log('HELLO------3')
         throw new BadRequestException('User PNH');
       }
       
