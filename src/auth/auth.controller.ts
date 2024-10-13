@@ -59,7 +59,9 @@ export class AuthController {
     async refresh(@Req() request: RequestWithUser) {
       // todo хм... почему не работает нотация через точку?
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user['id']);
+      console.log(accessTokenCookie, ' >>>> accessTokenCookie')
       if(!accessTokenCookie.token) {
+        console.log('1')
         throw new BadRequestException('User is not auth');
       }
       request.res.setHeader('Set-Cookie', accessTokenCookie.cookie);
