@@ -54,10 +54,13 @@ export class AuthController {
       return await this.usersService.confirmEmailAndGetUser(email);
     }
 
-    //@UseGuards(JwtRefreshGuard)
+    @UseGuards(JwtRefreshGuard)
     @Post('refresh')
     async refresh(@Req() request: RequestWithUser) {
       // todo хм... почему не работает нотация через точку?
+      if (!request.user) {
+        throw new BadRequestException('User PNH');
+      }
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user['id']);
       console.log(accessTokenCookie, ' >>>> accessTokenCookie')
       if(!accessTokenCookie.token) {
