@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, HttpCode, Param, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, HttpCode, Param, Post, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { LocalAuthGuard } from './quards/local-auth.guard';
@@ -61,6 +61,9 @@ export class AuthController {
     async refresh(@Req() request: RequestWithUser) {
       // todo хм... почему не работает нотация через точку? 
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(request.user['id']);
+      if(!accessTokenCookie.token) {
+        throw new BadRequestException('User is not auth');
+      }
       request.res.setHeader('Set-Cookie', accessTokenCookie.cookie);
 
       return {
