@@ -1,5 +1,5 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
@@ -16,7 +16,14 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
         private readonly userService: UserService
     ) {
         super({
-            jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => request?.cookies?.Refresh]),
+            jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
+                console.log(request?.cookies, ' >>> request')
+                if (!request?.cookies?.Refresh) {
+                    console.log('HELLO')
+                    throw new BadRequestException('User is not auth');
+                }
+                return request?.cookies?.Refresh
+            }]),
             secretOrKey: configService.get('JWT_REFRESH_TOKEN_SECRET'),
             passReqToCallback: true,
         });
@@ -24,6 +31,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
     async validate(request: Request, payload: TokenPayload) {
         const refreshToken = request.cookies?.Refresh;
+        console.log(refreshToken, ' >>> refreshToken-------1')
         return await this.userService.getUserIfRefreshTokenMatches(refreshToken, payload.userId);
     }
 }
